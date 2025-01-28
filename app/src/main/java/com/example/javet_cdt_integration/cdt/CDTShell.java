@@ -17,22 +17,20 @@
 package com.example.javet_cdt_integration.cdt;
 
 import com.caoccao.javet.interfaces.IJavetLogger;
-import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.utils.JavetDefaultLogger;
-import com.caoccao.javet.values.V8Value;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.websocket.server.NativeWebSocketServletContainerInitializer;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 
-import java.util.Scanner;
-
 public class CDTShell {
     protected IJavetLogger logger;
+    protected V8Runtime v8Runtime;
     private final Server inspectorServer = new Server(CDTConfig.getPort());
 
-    public CDTShell() {
+    public CDTShell(V8Runtime v8Runtime) {
+        this.v8Runtime = v8Runtime;
         logger = new JavetDefaultLogger(getClass().getName());
     }
 
@@ -41,7 +39,8 @@ public class CDTShell {
                 ServletContextHandler.SESSIONS | ServletContextHandler.NO_SECURITY);
         inspectorServletContextHandler.setContextPath(CDTConfig.PATH_ROOT);
         inspectorServer.setHandler(inspectorServletContextHandler);
-        try (V8Runtime v8Runtime = V8Host.getV8Instance().createV8Runtime()) {
+
+        try {
             inspectorServletContextHandler.addServlet(CDTHttpServlet.class, CDTConfig.PATH_ROOT);
             NativeWebSocketServletContainerInitializer.configure(inspectorServletContextHandler,
                     (servletContext, nativeWebSocketConfiguration) -> {

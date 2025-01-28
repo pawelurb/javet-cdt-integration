@@ -11,11 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.caoccao.javet.interop.V8Host
+import com.caoccao.javet.interop.V8Runtime
 import com.example.javet_cdt_integration.cdt.CDTShell
 import com.example.javet_cdt_integration.ui.theme.JavetcdtintegrationTheme
 
 class MainActivity : ComponentActivity() {
-    private val cdtShell: CDTShell = CDTShell()
+    private val v8Runtime: V8Runtime = V8Host.getV8Instance().createV8Runtime()
+    private lateinit var cdtShell: CDTShell
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +33,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        cdtShell = CDTShell(v8Runtime)
         cdtShell.run()
     }
 
