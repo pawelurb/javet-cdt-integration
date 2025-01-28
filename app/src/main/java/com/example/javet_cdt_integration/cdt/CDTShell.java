@@ -19,10 +19,14 @@ package com.example.javet_cdt_integration.cdt;
 import com.caoccao.javet.interfaces.IJavetLogger;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.utils.JavetDefaultLogger;
+import com.caoccao.javet.values.V8Value;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.websocket.server.NativeWebSocketServletContainerInitializer;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
+
+import java.util.Scanner;
 
 public class CDTShell {
     protected IJavetLogger logger;
@@ -55,26 +59,22 @@ public class CDTShell {
             System.out.println("Welcome to CDT Shell!");
             System.out.println("Input the script or '" + CDTConfig.COMMAND_EXIT + "' to exit.");
 
-            /*
-            Following code has been commented out as it isn't Android Java code (`System.in`).
-             */
-
-//            try (Scanner scanner = new Scanner(System.in)) {
-//                while (true) {
-//                    System.out.print("> ");
-//                    String command = scanner.nextLine();
-//                    if (CDTConfig.COMMAND_EXIT.equals(command)) {
-//                        break;
-//                    }
-//                    try (V8Value v8Value = v8Runtime.getExecutor(command).execute()) {
-//                        if (v8Value != null) {
-//                            System.out.println(v8Value);
-//                        }
-//                    } catch (Throwable t) {
-//                        System.err.println(t.getMessage());
-//                    }
-//                }
-//            }
+            try (Scanner scanner = new Scanner(System.in)) {
+                while (true) {
+                    System.out.print("> ");
+                    String command = scanner.nextLine();
+                    if (CDTConfig.COMMAND_EXIT.equals(command)) {
+                        break;
+                    }
+                    try (V8Value v8Value = v8Runtime.getExecutor(command).execute()) {
+                        if (v8Value != null) {
+                            System.out.println(v8Value);
+                        }
+                    } catch (Throwable t) {
+                        System.err.println(t.getMessage());
+                    }
+                }
+            }
         } catch (Throwable t) {
             logger.logError(t, t.getMessage());
         }
